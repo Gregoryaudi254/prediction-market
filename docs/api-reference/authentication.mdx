@@ -1,0 +1,28 @@
+---
+title: Authentication
+description: Authentication endpoints and credential models.
+---
+
+## Playground
+
+### CLOB Auth
+
+<APIPage
+  document="clob"
+  operations={[
+    { path: '/auth/api-key', method: 'post' },
+    { path: '/auth/api-keys', method: 'get' },
+    { path: '/auth/derive-api-key', method: 'get' },
+    { path: '/auth/derive-api-key', method: 'delete' }
+  ]}
+/>
+
+### Community Auth
+
+<APIPage
+  document="community"
+  operations={[
+    { path: '/auth/nonce', method: 'post' },
+    { path: '/auth/verify', method: 'post' }
+  ]}
+/>

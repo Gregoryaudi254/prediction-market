@@ -1,0 +1,10 @@
+{
+  "title": "Comments",
+  "description": "Comment endpoints for reading discussion threads and user comments.",
+  "icon": "MessageSquare",
+  "pages": [
+    "get-comments-by-comment-id",
+    "get-comments-by-user-address",
+    "list-comments"
+  ]
+}

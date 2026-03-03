@@ -1,0 +1,9 @@
+{
+  "title": "Series",
+  "description": "Series endpoints for available feeds and series metadata.",
+  "icon": "List",
+  "pages": [
+    "get-series-by-id",
+    "list-series"
+  ]
+}

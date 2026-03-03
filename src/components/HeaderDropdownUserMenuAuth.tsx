@@ -186,7 +186,12 @@ export default function HeaderDropdownUserMenuAuth() {
           </DropdownMenuItem>
 
           <DropdownMenuItem asChild className="py-2 text-sm font-semibold">
-            <Link href="/docs/api" target="_blank" rel="noreferrer" className="flex w-full items-center gap-1.5">
+            <Link
+              href="/docs/api-reference"
+              target="_blank"
+              rel="noreferrer"
+              className="flex w-full items-center gap-1.5"
+            >
               <UnplugIcon className="size-4 text-pink-500" />
               {t('APIs')}
             </Link>

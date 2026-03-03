@@ -1,0 +1,16 @@
+---
+title: Market
+description: "Subscribe to market order book and trade updates over WebSocket."
+---
+
+## WebSocket Playground
+
+<WebSocketPlayground
+  endpoint="wss://ws-subscriptions-clob.kuest.com/ws/market"
+  defaultMessage={`{
+  "type": "market",
+  "assets_ids": ["<asset_id>"],
+  "markets": [],
+  "custom_feature_enabled": true
+}`}
+/>

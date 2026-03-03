@@ -1,0 +1,32 @@
+{
+  "title": "API Reference",
+  "description": "API reference with native endpoint playgrounds.",
+  "icon": "SquareTerminal",
+  "root": true,
+  "pages": [
+    "introduction",
+    "authentication",
+    "---Trade---",
+    "...trade",
+    "---Market Data---",
+    "...market-data",
+    "---Markets---",
+    "...markets",
+    "---Data---",
+    "...data",
+    "---Core---",
+    "...core",
+    "---Comments---",
+    "...comments",
+    "---Profiles---",
+    "...profiles",
+    "---Builders---",
+    "...builders",
+    "---Misc---",
+    "...misc",
+    "---Series---",
+    "...series",
+    "---Wss---",
+    "...wss"
+  ]
+}
