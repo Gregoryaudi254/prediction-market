@@ -1,6 +1,6 @@
 'use client'
 
-import { useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import PublicActivityList from '@/app/[locale]/(platform)/profile/_components/PublicActivityList'
 import PublicPositionsList from '@/app/[locale]/(platform)/profile/_components/PublicPositionsList'
 import { cn } from '@/lib/utils'
@@ -12,18 +12,28 @@ const baseTabs = [
   { id: 'activity' as const, label: 'Activity' },
 ]
 
+type PublicProfileTab = (typeof baseTabs)[number]
+
 interface PublicProfileTabsProps {
   userAddress: string
 }
 
-export default function PublicProfileTabs({ userAddress }: PublicProfileTabsProps) {
-  const [activeTab, setActiveTab] = useState<TabType>('positions')
+function useActiveProfileTab() {
+  return useState<TabType>('positions')
+}
+
+function useTabIndicatorPosition({
+  tabs,
+  activeTab,
+}: {
+  tabs: PublicProfileTab[]
+  activeTab: TabType
+}) {
   const tabRef = useRef<(HTMLButtonElement | null)[]>([])
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 })
   const [isInitialized, setIsInitialized] = useState(false)
-  const tabs = useMemo(() => baseTabs, [])
 
-  useLayoutEffect(() => {
+  useLayoutEffect(function positionActiveTabIndicator() {
     const activeTabIndex = tabs.findIndex(tab => tab.id === activeTab)
     const activeTabElement = tabRef.current[activeTabIndex]
 
@@ -41,6 +51,14 @@ export default function PublicProfileTabs({ userAddress }: PublicProfileTabsProp
       })
     }
   }, [activeTab, tabs])
+
+  return { tabRef, indicatorStyle, isInitialized }
+}
+
+export default function PublicProfileTabs({ userAddress }: PublicProfileTabsProps) {
+  const [activeTab, setActiveTab] = useActiveProfileTab()
+  const tabs = baseTabs
+  const { tabRef, indicatorStyle, isInitialized } = useTabIndicatorPosition({ tabs, activeTab })
 
   return (
     <div className="overflow-hidden rounded-2xl border">
