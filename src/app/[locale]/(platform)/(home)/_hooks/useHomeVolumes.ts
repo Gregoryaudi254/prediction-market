@@ -65,6 +65,8 @@ export function useHomeVolumes(events: Event[]) {
         }),
       })
 
+      console.log('responseeeeees', JSON.stringify(response))
+
       if (!response.ok) {
         const message = `Failed to fetch home volumes (${response.status} ${response.statusText}).`
         console.error(message)
