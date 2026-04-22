@@ -5,6 +5,7 @@ export interface EventCardProps {
   priceOverridesByMarket?: Record<string, number>
   enableHomeSportsMoneylineLayout?: boolean
   currentTimestamp?: number | null
+  volumeOverride?: number
 }
 
 export interface OrderbookLevelSummary {
