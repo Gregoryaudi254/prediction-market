@@ -93,8 +93,10 @@ export async function generateStaticParams() {
   return [{ locale: 'en' }]
 }
 
-export default async function LocaleLayout({ params, children }: LayoutProps<'/[locale]'>) {
-  const { locale } = await params
+export default async function LocaleLayout(props: LayoutProps<'/[locale]'>) {
+  const params = await props.params
+  const { locale } = params
+  const { children } = props
 
   if (!hasLocale(routing.locales, locale)) {
     notFound()
