@@ -11,8 +11,9 @@ export const metadata: Metadata = {
   title: getNewPageSeoTitle(),
 }
 
-export default async function NewPage({ params }: PageProps<'/[locale]/new'>) {
-  const { locale } = await params
+export default async function NewPage(props: PageProps<'/[locale]/new'>) {
+  const params = await props.params
+  const { locale } = params
   setRequestLocale(locale)
 
   return <HomeContent locale={locale} initialTag={MAIN_TAG_SLUG} />
