@@ -29,7 +29,7 @@ export default function HeaderLogo({ labelSuffix }: HeaderLogoProps) {
         imageClassName="size-[1em] object-contain"
         size={32}
       />
-      <span>{label}</span>
+      <span>{ChezaChe}</span>
     </AppLink>
   )
 }
