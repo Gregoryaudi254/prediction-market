@@ -129,7 +129,7 @@ export default function EventCard({
         }
         return `Ended ${formatDate(resolvedDate)}`
       })()
-  const resolvedVolume = event.volume ?? 0
+
   const resolvedVolume = volumeOverride ?? event.volume ?? 0
 
   if (homeSportsMoneylineModel) {
