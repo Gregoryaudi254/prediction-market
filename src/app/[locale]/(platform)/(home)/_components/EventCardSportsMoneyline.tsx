@@ -20,6 +20,7 @@ interface EventCardSportsMoneylineProps {
   model: HomeSportsMoneylineModel
   getDisplayChance: (marketId: string) => number
   currentTimestamp?: number | null
+  volumeOverride?: number
 }
 
 const HOME_OUTCOME_BUTTON_HEIGHT_CLASS = 'h-[40px]'
@@ -159,6 +160,7 @@ export default function EventCardSportsMoneyline({
   model,
   getDisplayChance,
   currentTimestamp,
+  volumeOverride,
 }: EventCardSportsMoneylineProps) {
   const marketSlugByConditionId = new Map(
     (event.markets ?? [])
@@ -348,6 +350,7 @@ export default function EventCardSportsMoneyline({
           <div className="flex min-w-0 items-center gap-1.5 overflow-x-auto whitespace-nowrap">
             <span>
               {formatVolume(event.volume)}
+              {formatVolume(volumeOverride ?? event.volume ?? 0)}
               {' '}
               Vol.
             </span>
