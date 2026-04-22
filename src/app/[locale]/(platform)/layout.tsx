@@ -15,8 +15,10 @@ import { TagRepository } from '@/lib/db/queries/tag'
 import { buildChildParentMap, buildPlatformNavigationTags } from '@/lib/platform-navigation'
 import AppKitProvider from '@/providers/AppKitProvider'
 
-export default async function PlatformLayout({ params, children }: LayoutProps<'/[locale]'>) {
-  const { locale } = await params
+export default async function PlatformLayout(props: LayoutProps<'/[locale]'>) {
+  const params = await props.params
+  const { locale } = params
+  const { children } = props
   const resolvedLocale = locale as SupportedLocale
   setRequestLocale(resolvedLocale)
   cacheTag(cacheTags.mainTags(resolvedLocale))
