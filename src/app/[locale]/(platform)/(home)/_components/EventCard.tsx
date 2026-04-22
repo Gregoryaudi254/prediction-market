@@ -81,6 +81,7 @@ export default function EventCard({
   priceOverridesByMarket = EMPTY_PRICE_OVERRIDES,
   enableHomeSportsMoneylineLayout = false,
   currentTimestamp = null,
+  volumeOverride,
 }: EventCardProps) {
   const isResolvedEvent = isHomeEventResolvedLike(event)
   const canUseXTrackerResolvedOutcomes = useCanUseXTrackerResolvedOutcomes(event)
@@ -129,6 +130,7 @@ export default function EventCard({
         return `Ended ${formatDate(resolvedDate)}`
       })()
   const resolvedVolume = event.volume ?? 0
+  const resolvedVolume = volumeOverride ?? event.volume ?? 0
 
   if (homeSportsMoneylineModel) {
     return (
@@ -137,6 +139,7 @@ export default function EventCard({
         model={homeSportsMoneylineModel}
         getDisplayChance={getDisplayChance}
         currentTimestamp={currentTimestamp}
+        volumeOverride={volumeOverride}
       />
     )
   }
