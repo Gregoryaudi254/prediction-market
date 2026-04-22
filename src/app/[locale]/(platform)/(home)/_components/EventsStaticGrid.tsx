@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 interface EventsStaticGridProps {
   events: Event[]
   priceOverridesByMarket: Record<string, number>
+  volumesByEvent?: Record<string, number>
   maxColumns?: number
   isFetching?: boolean
   currentTimestamp?: number | null
@@ -33,6 +34,7 @@ export function getStaticGridColumnsClassName(maxColumns?: number) {
 export default function EventsStaticGrid({
   events,
   priceOverridesByMarket,
+  volumesByEvent,
   maxColumns,
   isFetching = false,
   currentTimestamp = null,
@@ -46,6 +48,7 @@ export default function EventsStaticGrid({
             priceOverridesByMarket={priceOverridesByMarket}
             enableHomeSportsMoneylineLayout
             currentTimestamp={currentTimestamp}
+            volumeOverride={volumesByEvent?.[event.id]}
           />
         </div>
       ))}
