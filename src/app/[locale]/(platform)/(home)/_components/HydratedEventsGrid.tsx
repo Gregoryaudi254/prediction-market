@@ -12,6 +12,7 @@ import EventsStaticGrid from '@/app/[locale]/(platform)/(home)/_components/Event
 import EventsEmptyState from '@/app/[locale]/(platform)/event/[slug]/_components/EventsEmptyState'
 import { useEventLastTrades } from '@/app/[locale]/(platform)/event/[slug]/_hooks/useEventLastTrades'
 import { useEventMarketQuotes } from '@/app/[locale]/(platform)/event/[slug]/_hooks/useEventMidPrices'
+import { useHomeVolumes } from '@/app/[locale]/(platform)/(home)/_hooks/useHomeVolumes'
 import { buildMarketTargets } from '@/app/[locale]/(platform)/event/[slug]/_hooks/useEventPriceHistory'
 import { useColumns } from '@/hooks/useColumns'
 import { useCurrentTimestamp } from '@/hooks/useCurrentTimestamp'
@@ -617,6 +618,8 @@ export default function HydratedEventsGrid({
     livePriceEventIds,
   })
 
+  const volumesByEvent = useHomeVolumes(hydrationSafeEventsToRender)
+
   const isLoadingNewData = eventsToRender.length === 0
     && (isPending || (isFetching && !isFetchingNextPage && (!data || data.pages.length === 0)))
 
@@ -664,6 +667,7 @@ export default function HydratedEventsGrid({
       <EventsStaticGrid
         events={hydrationSafeEventsToRender}
         priceOverridesByMarket={hasHydrated ? stablePriceOverridesByMarket : EMPTY_PRICE_OVERRIDES}
+        volumesByEvent={volumesByEvent}
         maxColumns={maxColumns}
         isFetching={(visibleEvents.length === 0) || (isFetching && hasFreshQueryData)}
         currentTimestamp={currentTimestamp}
