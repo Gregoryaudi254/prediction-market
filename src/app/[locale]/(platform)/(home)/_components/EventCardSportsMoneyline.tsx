@@ -349,6 +349,7 @@ export default function EventCardSportsMoneyline({
         <div className="relative flex w-full items-center justify-between gap-2 text-xs text-muted-foreground">
           <div className="flex min-w-0 items-center gap-1.5 overflow-x-auto whitespace-nowrap">
             <span>
+              {formatVolume(event.volume)}
               {formatVolume(volumeOverride ?? event.volume ?? 0)}
               {' '}
               Vol.
