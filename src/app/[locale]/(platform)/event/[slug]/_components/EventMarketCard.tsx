@@ -12,6 +12,7 @@ import { useOutcomeLabel } from '@/hooks/useOutcomeLabel'
 import { OUTCOME_INDEX } from '@/lib/constants'
 import { formatCentsLabel, formatSharesLabel } from '@/lib/formatters'
 import { cn } from '@/lib/utils'
+import { toast } from 'sonner'
 
 export interface MarketPositionTag {
   outcomeIndex: typeof OUTCOME_INDEX.YES | typeof OUTCOME_INDEX.NO
@@ -65,6 +66,8 @@ function useMarketCardVolume(market: EventMarketRow['market'], yesOutcome: Event
           conditions: volumeRequestPayload.conditions,
         }),
       })
+
+      toast.info(JSON.stringify(response))
 
       const payload = await response.json() as Array<{
         condition_id: string
