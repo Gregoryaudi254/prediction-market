@@ -22,18 +22,26 @@ const VOLUME_REFRESH_INTERVAL_MS = 60_000
 function buildVolumeConditions(events: Event[]): VolumeCondition[] {
   const conditions: VolumeCondition[] = []
 
-  for (const event of events) {
+   for (const event of events) {
     for (const market of event.markets) {
-      const yesOutcome = market.outcomes.find(o => o.outcome_index === OUTCOME_INDEX.YES)
-      const noOutcome = market.outcomes.find(o => o.outcome_index === OUTCOME_INDEX.NO)
+      const yesOutcome = market.outcomes.find(o => o.outcome_index === OUTCOME_INDEX.YES)?.token_id
+      const noOutcome = market.outcomes.find(o => o.outcome_index === OUTCOME_INDEX.NO)?.token_id
+      const fallbackTokenIds = market.outcomes
+        .map(outcome => outcome.token_id)
+        .filter((tokenId): tokenId is string => typeof tokenId === 'string' && tokenId.trim().length > 0)
+        .slice(0, 2)
 
-      if (!yesOutcome?.token_id || !noOutcome?.token_id) {
+      const tokenIds = (yesOutcome && noOutcome)
+        ? [yesOutcome, noOutcome]
+        : fallbackTokenIds
+
+      if (!market.condition_id || tokenIds.length < 2) {
         continue
       }
 
       conditions.push({
         condition_id: market.condition_id,
-        token_ids: [yesOutcome.token_id, noOutcome.token_id],
+        token_ids: [tokenIds[0], tokenIds[1]],
       })
     }
   }
