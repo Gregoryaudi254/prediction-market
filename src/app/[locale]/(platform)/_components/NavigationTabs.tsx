@@ -174,9 +174,10 @@ function useNavigationSelection(tags: ReadonlyArray<NavigationTag>) {
 
 export default function NavigationTabs() {
   const { tags } = usePlatformNavigationData()
-  const { containerRef, tabItemRef } = useNavigationTabsRefs(tags.length)
+  const visibleTags: NavigationTag[] = tags.filter((tag: NavigationTag) => tag.slug !== 'trending')
+  const { containerRef, tabItemRef } = useNavigationTabsRefs(visibleTags.length)
   const { showLeftShadow, showRightShadow } = useScrollShadows(containerRef)
-  const { navigationSelection, activeIndex, dynamicHomeCategorySlugSet } = useNavigationSelection(tags)
+  const { navigationSelection, activeIndex, dynamicHomeCategorySlugSet } = useNavigationSelection(visibleTags)
   useScrollActiveTabIntoView({ activeIndex, containerRef, tabItemRef })
 
   return (
@@ -208,7 +209,7 @@ export default function NavigationTabs() {
             `,
           )}
         >
-          {tags.map((tag, index) => (
+          {visibleTags.map((tag, index) => (
             <div key={tag.slug} className="flex snap-start items-center">
               <NavigationTab
                 tag={tag}
