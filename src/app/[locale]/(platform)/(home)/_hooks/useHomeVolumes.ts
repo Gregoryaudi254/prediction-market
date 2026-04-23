@@ -87,7 +87,9 @@ export function useHomeVolumes(events: Event[]) {
       })
 
       if (!response.ok) {
-        const message = `Failed to fetch home volumes (${response.status} ${response.statusText}).`
+        const errorPayload = await response.json().catch(() => null) as { error?: string } | null
+        const details = typeof errorPayload?.error === 'string' ? ` ${errorPayload.error}` : ''
+        const message = `Failed to fetch home volumes (${response.status} ${response.statusText}).${details}`
         console.error(message)
         throw new Error(message)
       }
@@ -187,5 +189,6 @@ export function useHomeVolumes(events: Event[]) {
 
   return volumeByEvent
 }
+
 
 
