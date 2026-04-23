@@ -11,6 +11,8 @@ interface VolumesRequestBody {
 }
 
 export async function POST(request: Request) {
+  const debugRequested = request.headers.get('x-debug-volumes') === '1'
+  const debugEnabled = debugRequested || process.env.DEBUG_VOLUMES === '1'
   const clobUrl = process.env.CLOB_URL
   if (!clobUrl) {
     return NextResponse.json({ error: 'CLOB_URL is not configured.' }, { status: 500 })
@@ -35,10 +37,21 @@ export async function POST(request: Request) {
     : []
 
   if (conditions.length === 0) {
+    if (debugEnabled) {
+      console.info('[api/events/volumes] empty request conditions')
+    }
     return NextResponse.json([])
   }
 
   try {
+    if (debugEnabled) {
+      console.info('[api/events/volumes] forwarding request', {
+        include24h: Boolean(body.include_24h),
+        conditionsCount: conditions.length,
+        conditionSample: conditions.slice(0, 10).map(item => item.condition_id),
+      })
+    }
+
     const response = await fetch(`${clobUrl}/data/volumes`, {
       method: 'POST',
       headers: {
@@ -61,6 +74,25 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: message }, { status: response.status })
     }
 
+    if (debugEnabled && Array.isArray(payload)) {
+      const statusHistogram = payload.reduce<Record<string, number>>((acc, item: any) => {
+        const key = String(item?.status ?? 'unknown')
+        acc[key] = (acc[key] ?? 0) + 1
+        return acc
+      }, {})
+      const missingIds = payload
+        .filter((item: any) => item?.status !== 200)
+        .map((item: any) => item?.condition_id)
+        .filter((value: unknown): value is string => typeof value === 'string')
+
+      console.info('[api/events/volumes] upstream response summary', {
+        payloadCount: payload.length,
+        statusHistogram,
+        missingConditionCount: missingIds.length,
+        missingConditionSample: missingIds.slice(0, 20),
+      })
+    }
+
     return NextResponse.json(payload, {
       headers: {
         'Cache-Control': 'no-store',
@@ -72,4 +104,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }
+
 
