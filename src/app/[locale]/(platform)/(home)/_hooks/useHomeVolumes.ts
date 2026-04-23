@@ -4,6 +4,7 @@ import type { Event } from '@/types'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { OUTCOME_INDEX } from '@/lib/constants'
+import { toast } from 'sonner'
 
 interface VolumeCondition {
   condition_id: string
@@ -64,6 +65,8 @@ export function useHomeVolumes(events: Event[]) {
           conditions,
         }),
       })
+
+       toast.info(JSON.stringify(response))
 
       console.log('responseeeeees', JSON.stringify(response))
 
