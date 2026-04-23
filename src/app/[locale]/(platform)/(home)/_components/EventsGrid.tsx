@@ -31,7 +31,7 @@ export default function EventsGrid({
       maxColumns={maxColumns}
       onClearFilters={onClearFilters}
       routeMainTag={routeMainTag}
-      routeTag="trending"
+      routeTag={routeTag}
     />
   )
 }
