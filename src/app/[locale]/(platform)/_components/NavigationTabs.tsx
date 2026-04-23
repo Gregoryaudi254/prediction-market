@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils'
 
 function getMainTagHref(slug: string, dynamicHomeCategorySlugSet: ReadonlySet<string>): Route {
   if (slug === 'trending') {
-   return '/sports/live' as Route
+   return '/' as Route
   }
 
   if (slug === 'sports') {
@@ -29,7 +29,7 @@ function getMainTagHref(slug: string, dynamicHomeCategorySlugSet: ReadonlySet<st
     return `/${slug}` as Route
   }
 
-  return '/sports/live' as Route
+  return '/' as Route
 }
 
 type NavigationTag = ReturnType<typeof usePlatformNavigationData>['tags'][number]
