@@ -67,7 +67,6 @@ function useMarketCardVolume(market: EventMarketRow['market'], yesOutcome: Event
         }),
       })
 
-      toast.info(JSON.stringify(response))
 
       const payload = await response.json() as Array<{
         condition_id: string
