@@ -68,7 +68,7 @@ export function useHomeVolumes(events: Event[]) {
 
        toast.info(JSON.stringify(response))
 
-      console.log('responseeeeees', JSON.stringify(response))
+      console.log('responseees', JSON.stringify(response))
 
       if (!response.ok) {
         const message = `Failed to fetch home volumes (${response.status} ${response.statusText}).`
