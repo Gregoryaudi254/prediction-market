@@ -17,6 +17,17 @@ interface VolumeApiEntry {
 }
 
 const VOLUME_REFRESH_INTERVAL_MS = 60_000
+const DEBUG_QUERY_PARAM = 'debugVolumes'
+
+function isHomeVolumeDebugEnabled() {
+  if (typeof window === 'undefined') {
+    return false
+  }
+
+  const queryEnabled = new URLSearchParams(window.location.search).get(DEBUG_QUERY_PARAM) === '1'
+  const storageEnabled = window.localStorage.getItem(DEBUG_QUERY_PARAM) === '1'
+  return queryEnabled || storageEnabled
+}
 
 function buildVolumeConditions(events: Event[]): VolumeCondition[] {
   const conditions: VolumeCondition[] = []
@@ -50,6 +61,7 @@ function buildVolumeConditions(events: Event[]): VolumeCondition[] {
 
 export function useHomeVolumes(events: Event[]) {
   const conditions = useMemo(() => buildVolumeConditions(events), [events])
+  const debugEnabled = isHomeVolumeDebugEnabled()
 
   const signature = useMemo(() => {
     return conditions.map((condition: VolumeCondition) => `${condition.condition_id}:${condition.token_ids.join(':')}`).sort().join('|')
@@ -66,6 +78,7 @@ export function useHomeVolumes(events: Event[]) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(debugEnabled ? { 'x-debug-volumes': '1' } : {}),
         },
         body: JSON.stringify({
           include_24h: false,
@@ -80,6 +93,21 @@ export function useHomeVolumes(events: Event[]) {
       }
 
       const payload = await response.json() as VolumeApiEntry[]
+      if (debugEnabled) {
+        const okEntries = payload.filter(entry => entry?.status === 200).length
+        const missingEntries = payload.filter(entry => entry?.status !== 200).map(entry => ({
+          condition_id: entry?.condition_id,
+          status: entry?.status,
+        }))
+        console.info('[home-volumes] API payload summary', {
+          eventsCount: events.length,
+          conditionsCount: conditions.length,
+          payloadCount: payload.length,
+          okEntries,
+          missingEntriesCount: missingEntries.length,
+          missingEntriesSample: missingEntries.slice(0, 10),
+        })
+      }
 
       const result: Record<string, number> = {}
       for (const entry of payload) {
@@ -103,8 +131,18 @@ export function useHomeVolumes(events: Event[]) {
 
   const volumeByEvent = useMemo(() => {
     const result: Record<string, number> = {}
+    const eventDebugRows: Array<{
+      eventId: string
+      eventTitle: string
+      liveMarketsUsed: number
+      fallbackMarketsUsed: number
+      total: number
+    }> = []
+
     for (const event of events) {
       let total = 0
+      let liveMarketsUsed = 0
+      let fallbackMarketsUsed = 0
       for (const market of event.markets) {
         const liveVolume = volumeByCondition?.[market.condition_id]
         const fallbackMarketVolume = Number.isFinite(market.volume) ? market.volume : 0
@@ -115,13 +153,39 @@ export function useHomeVolumes(events: Event[]) {
         const marketVolume = typeof liveVolume === 'number' && Number.isFinite(liveVolume)
           ? liveVolume
           : fallbackVolume
+        if (typeof liveVolume === 'number' && Number.isFinite(liveVolume)) {
+          liveMarketsUsed += 1
+        }
+        else {
+          fallbackMarketsUsed += 1
+        }
         total += marketVolume
       }
       result[event.id] = total
+
+      if (debugEnabled) {
+        eventDebugRows.push({
+          eventId: event.id,
+          eventTitle: event.title,
+          liveMarketsUsed,
+          fallbackMarketsUsed,
+          total,
+        })
+      }
     }
+
+    if (debugEnabled) {
+      console.info('[home-volumes] event totals summary', {
+        signature,
+        eventsCount: events.length,
+        rows: eventDebugRows.slice(0, 20),
+      })
+    }
+
     return result
-  }, [events, volumeByCondition])
+  }, [debugEnabled, events, signature, volumeByCondition])
 
   return volumeByEvent
 }
+
 
