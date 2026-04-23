@@ -4,7 +4,6 @@ import type { Event } from '@/types'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { OUTCOME_INDEX } from '@/lib/constants'
-import { toast } from 'sonner'
 
 interface VolumeCondition {
   condition_id: string
@@ -22,7 +21,7 @@ const VOLUME_REFRESH_INTERVAL_MS = 60_000
 function buildVolumeConditions(events: Event[]): VolumeCondition[] {
   const conditions: VolumeCondition[] = []
 
-   for (const event of events) {
+  for (const event of events) {
     for (const market of event.markets) {
       const yesOutcome = market.outcomes.find(o => o.outcome_index === OUTCOME_INDEX.YES)?.token_id
       const noOutcome = market.outcomes.find(o => o.outcome_index === OUTCOME_INDEX.NO)?.token_id
@@ -63,7 +62,7 @@ export function useHomeVolumes(events: Event[]) {
         return {} as Record<string, number>
       }
 
-       const response = await fetch('/api/events/volumes', {
+      const response = await fetch('/api/events/volumes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -73,10 +72,6 @@ export function useHomeVolumes(events: Event[]) {
           conditions,
         }),
       })
-
-       toast.info(JSON.stringify(response))
-
-      console.log('responseees', JSON.stringify(response))
 
       if (!response.ok) {
         const message = `Failed to fetch home volumes (${response.status} ${response.statusText}).`
@@ -107,22 +102,22 @@ export function useHomeVolumes(events: Event[]) {
   })
 
   const volumeByEvent = useMemo(() => {
-    if (!volumeByCondition) {
-      return {}
-    }
-
     const result: Record<string, number> = {}
     for (const event of events) {
       let total = 0
       for (const market of event.markets) {
-        const marketVolume = volumeByCondition[market.condition_id]
-        if (marketVolume != null && Number.isFinite(marketVolume)) {
-          total += marketVolume
-        }
+        const liveVolume = volumeByCondition?.[market.condition_id]
+        const fallbackMarketVolume = Number.isFinite(market.volume) ? market.volume : 0
+        const fallbackConditionVolume = Number.isFinite(market.condition?.volume)
+          ? market.condition.volume
+          : 0
+        const fallbackVolume = Math.max(fallbackMarketVolume, fallbackConditionVolume)
+        const marketVolume = typeof liveVolume === 'number' && Number.isFinite(liveVolume)
+          ? liveVolume
+          : fallbackVolume
+        total += marketVolume
       }
-      if (total > 0) {
-        result[event.id] = total
-      }
+      result[event.id] = total
     }
     return result
   }, [events, volumeByCondition])
