@@ -55,7 +55,7 @@ export function useHomeVolumes(events: Event[]) {
         return {} as Record<string, number>
       }
 
-      const response = await fetch(`${process.env.CLOB_URL}/data/volumes`, {
+       const response = await fetch('/api/events/volumes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
